@@ -1,73 +1,111 @@
-# React + TypeScript + Vite
+# StompZone Resume Builder
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A production-ready resume builder SPA for creating polished resumes with live preview, local autosave, and export-ready templates.
 
-Currently, two official plugins are available:
+The app is built as a static React/Vite application and is designed to deploy cleanly to Cloudflare Pages.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
 
-## React Compiler
+- Edit personal information, work experience, education, skills, projects, certifications, awards, and section layout.
+- Preview the resume live while editing.
+- Choose from three resume templates: Classic, Modern, and Executive.
+- Export to PDF, DOCX, app-native JSON, and JSON Resume-compatible JSON.
+- Import app-native JSON or JSON Resume-compatible JSON.
+- Use month/year date controls for work, education, and credentials.
+- View an interactive career timeline with overlap and gap warnings.
+- Autosave locally in the browser.
+- Keep document export libraries lazy-loaded for a smaller initial bundle.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Privacy
 
-## Expanding the ESLint configuration
+Resume data is stored only in the user's browser local storage. The app does not send resume content or personally identifiable information to the developer or third parties.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Because this is a static SPA, there is no backend service required for normal editing, previewing, import, export, or autosave behavior.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Tech Stack
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- shadcn/ui-style primitives
+- React Hook Form
+- Zod
+- Zustand
+- React DayPicker/date-fns
+- `@react-pdf/renderer`
+- `docx`
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Getting Started
+
+Install dependencies:
+
+```bash
+pnpm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Start the local dev server:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+pnpm dev
 ```
+
+Build for production:
+
+```bash
+pnpm build
+```
+
+Preview the production build locally:
+
+```bash
+pnpm preview
+```
+
+Run linting:
+
+```bash
+pnpm lint
+```
+
+## Deployment
+
+Recommended deployment target: Cloudflare Pages with Git integration.
+
+Cloudflare Pages settings:
+
+- Framework preset: `React (Vite)` or `Vite`
+- Build command: `pnpm build`
+- Build output directory: `dist`
+- Root directory: leave blank unless this app lives inside a monorepo subdirectory
+- Environment variables: none required
+
+Manual Wrangler deployment is also possible:
+
+```bash
+pnpm build
+npx wrangler pages deploy dist --project-name stompzone-resume-builder
+```
+
+## Project Structure
+
+```text
+src/
+  App.tsx               application shell
+  components/ui/        reusable UI primitives
+  domain/resume/        resume schemas, types, and sample data
+  features/editor/      resume editor sections
+  features/preview/     live preview and import/export controls
+  features/timeline/    career timeline utilities and UI
+  persistence/          Zustand store and local autosave
+  renderers/docx/       DOCX export renderer
+  renderers/json/       JSON Resume conversion helpers
+  renderers/pdf/        PDF export renderer
+  templates/            HTML resume preview templates
+```
+
+## Notes
+
+- PDF and DOCX export modules are dynamically imported when the user starts an export.
+- Generated files are downloaded directly in the browser.
+- The app uses local browser storage under the `antigravity-resume-data` and `antigravity-resume-template` keys for backward compatibility with earlier builds.
