@@ -1,11 +1,8 @@
-# StompZone Resume Builder
-
-A production-ready resume builder SPA for creating polished resumes with live preview, local autosave, and export-ready templates.
-
-The app is built as a static React/Vite application and is designed to deploy cleanly to Cloudflare Pages.
+<div align="center"><h1>StompZone Resume Builder</h1><img width="75%" alt="resume-hand-wide-ms" src="https://github.com/user-attachments/assets/4992b1d9-fa5d-4639-b0d0-fd843020811a" /><p>A production-ready resume builder SPA for creating polished resumes with live preview, local autosave, and export-ready templates.</p></div>
 
 ## Features
 
+- Built as a static React/Vite application and is designed to deploy cleanly to Cloudflare Pages.
 - Edit personal information, work experience, education, skills, projects, certifications, awards, and section layout.
 - Preview the resume live while editing.
 - Choose from three resume templates: Classic, Modern, and Executive.
