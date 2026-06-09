@@ -117,6 +117,9 @@ const loadInitialTemplate = (): ResumeTemplateType => {
   return 'classic';
 };
 
+const isEqual = (left: unknown, right: unknown) =>
+  JSON.stringify(left) === JSON.stringify(right);
+
 /**
  * Zustand store implementation for managing resume editing state.
  */
@@ -127,12 +130,14 @@ export const useResumeStore = create<ResumeState>((set) => ({
   selectedEducationId: null,
   selectedProjectId: null,
 
-  updateResume: (newResume) => set(() => {
+  updateResume: (newResume) => set((state) => {
+    if (isEqual(state.resume, newResume)) return state;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(newResume));
     return { resume: newResume };
   }),
 
   updateBasics: (basics) => set((state) => {
+    if (isEqual(state.resume.basics, basics)) return state;
     const nextResume = { ...state.resume, basics };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(nextResume));
     return { resume: nextResume };
@@ -150,8 +155,12 @@ export const useResumeStore = create<ResumeState>((set) => ({
   }),
 
   updateWork: (id, updatedFields) => set((state) => {
+    const currentWork = state.resume.work.find((w) => w.id === id);
+    if (!currentWork) return state;
+    const updatedWork = { ...currentWork, ...updatedFields };
+    if (isEqual(currentWork, updatedWork)) return state;
     const nextWork = state.resume.work.map((w) =>
-      w.id === id ? { ...w, ...updatedFields } : w
+      w.id === id ? updatedWork : w
     );
     nextWork.sort((a, b) => b.startDate.localeCompare(a.startDate));
     const nextResume = { ...state.resume, work: nextWork };
@@ -194,8 +203,12 @@ export const useResumeStore = create<ResumeState>((set) => ({
   }),
 
   updateEducation: (id, updatedFields) => set((state) => {
+    const currentEducation = state.resume.education.find((e) => e.id === id);
+    if (!currentEducation) return state;
+    const updatedEducation = { ...currentEducation, ...updatedFields };
+    if (isEqual(currentEducation, updatedEducation)) return state;
     const nextEducation = state.resume.education.map((e) =>
-      e.id === id ? { ...e, ...updatedFields } : e
+      e.id === id ? updatedEducation : e
     );
     nextEducation.sort((a, b) => b.startDate.localeCompare(a.startDate));
     const nextResume = { ...state.resume, education: nextEducation };
@@ -237,10 +250,14 @@ export const useResumeStore = create<ResumeState>((set) => ({
   }),
 
   updateSkill: (id, updatedFields) => set((state) => {
+    const currentSkill = state.resume.skills.find((s) => s.id === id);
+    if (!currentSkill) return state;
+    const updatedSkill = { ...currentSkill, ...updatedFields };
+    if (isEqual(currentSkill, updatedSkill)) return state;
     const nextResume = {
       ...state.resume,
       skills: state.resume.skills.map((s) =>
-        s.id === id ? { ...s, ...updatedFields } : s
+        s.id === id ? updatedSkill : s
       ),
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(nextResume));
@@ -276,10 +293,14 @@ export const useResumeStore = create<ResumeState>((set) => ({
   }),
 
   updateProject: (id, updatedFields) => set((state) => {
+    const currentProject = state.resume.projects.find((p) => p.id === id);
+    if (!currentProject) return state;
+    const updatedProject = { ...currentProject, ...updatedFields };
+    if (isEqual(currentProject, updatedProject)) return state;
     const nextResume = {
       ...state.resume,
       projects: state.resume.projects.map((p) =>
-        p.id === id ? { ...p, ...updatedFields } : p
+        p.id === id ? updatedProject : p
       ),
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(nextResume));
@@ -320,10 +341,14 @@ export const useResumeStore = create<ResumeState>((set) => ({
   }),
 
   updateCertificate: (id, updatedFields) => set((state) => {
+    const currentCertificate = state.resume.certificates.find((c) => c.id === id);
+    if (!currentCertificate) return state;
+    const updatedCertificate = { ...currentCertificate, ...updatedFields };
+    if (isEqual(currentCertificate, updatedCertificate)) return state;
     const nextResume = {
       ...state.resume,
       certificates: state.resume.certificates.map((c) =>
-        c.id === id ? { ...c, ...updatedFields } : c
+        c.id === id ? updatedCertificate : c
       ),
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(nextResume));
@@ -350,10 +375,14 @@ export const useResumeStore = create<ResumeState>((set) => ({
   }),
 
   updateAward: (id, updatedFields) => set((state) => {
+    const currentAward = state.resume.awards.find((a) => a.id === id);
+    if (!currentAward) return state;
+    const updatedAward = { ...currentAward, ...updatedFields };
+    if (isEqual(currentAward, updatedAward)) return state;
     const nextResume = {
       ...state.resume,
       awards: state.resume.awards.map((a) =>
-        a.id === id ? { ...a, ...updatedFields } : a
+        a.id === id ? updatedAward : a
       ),
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(nextResume));

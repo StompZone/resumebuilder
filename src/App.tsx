@@ -19,17 +19,17 @@ function App() {
             </div>
             <div>
               <h1 className="text-sm font-bold tracking-tight text-slate-950">
-                Antigravity Resume Builder
+                StompZone Resume Builder
               </h1>
               <p className="text-[10px] text-muted-foreground font-medium flex items-center gap-0.5">
                 <ShieldCheck className="size-3 text-emerald-500 shrink-0" />
-                ATS-Optimized Export
+                Polished PDF & DOCX Exports
               </p>
             </div>
           </div>
           <div className="flex items-center gap-3">
             <span className="text-xs text-muted-foreground font-medium hidden md:inline">
-              Premium Static SPA
+              Professional Resume Studio
             </span>
           </div>
         </header>
@@ -49,4 +49,3 @@ function App() {
 }
 
 export default App;
-
