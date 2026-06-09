@@ -12,6 +12,8 @@ import {
   Sparkles,
   Layers,
   FileSpreadsheet,
+  LoaderCircle,
+  X,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -22,15 +24,27 @@ import { cn } from '@/lib/utils';
 export function PreviewPanel() {
   const { resume, template, setTemplate, updateResume, resetResume, loadSampleData } = useResumeStore();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const [exportMessage, setExportMessage] = React.useState<string | null>(null);
+  const isExporting = Boolean(exportMessage);
 
   const handleExportPdf = async () => {
-    const { downloadPdfFile } = await import('@/renderers/pdf/PdfResumeRenderer');
-    await downloadPdfFile(resume, template);
+    setExportMessage('Please wait, getting your PDF ready...');
+    try {
+      const { downloadPdfFile } = await import('@/renderers/pdf/PdfResumeRenderer');
+      await downloadPdfFile(resume, template);
+    } finally {
+      setExportMessage(null);
+    }
   };
 
   const handleExportDocx = async () => {
-    const { downloadDocxFile } = await import('@/renderers/docx/DocxResumeRenderer');
-    await downloadDocxFile(resume);
+    setExportMessage('Please wait, getting your document ready...');
+    try {
+      const { downloadDocxFile } = await import('@/renderers/docx/DocxResumeRenderer');
+      await downloadDocxFile(resume);
+    } finally {
+      setExportMessage(null);
+    }
   };
 
   // Trigger download of app-native JSON
@@ -96,6 +110,7 @@ export function PreviewPanel() {
   };
 
   return (
+    <>
     <div className="flex flex-col h-full bg-slate-50 border rounded-xl overflow-hidden shadow-xs">
       {/* Top Header Actions */}
       <div className="border-b bg-card p-4 space-y-4 shrink-0 shadow-2xs">
@@ -132,6 +147,7 @@ export function PreviewPanel() {
             <Button
               type="button"
               onClick={handleExportPdf}
+              disabled={isExporting}
               className="h-8.5 text-xs font-medium gap-1.5 shadow-xs"
             >
               <Download className="size-3.5" />
@@ -141,6 +157,7 @@ export function PreviewPanel() {
               type="button"
               variant="outline"
               onClick={handleExportDocx}
+              disabled={isExporting}
               className="h-8.5 text-xs font-medium gap-1.5"
             >
               <FileText className="size-3.5 text-blue-600" />
@@ -231,5 +248,33 @@ export function PreviewPanel() {
         </div>
       </div>
     </div>
+    {exportMessage && (
+      <div
+        role="status"
+        aria-live="polite"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/20 backdrop-blur-xs"
+      >
+        <div className="relative flex w-[min(90vw,22rem)] flex-col items-center gap-3 rounded-xl border bg-background px-6 py-7 text-center shadow-xl">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => setExportMessage(null)}
+            className="absolute right-2 top-2 text-muted-foreground"
+            aria-label="Close export progress"
+          >
+            <X className="size-4" />
+          </Button>
+          <LoaderCircle className="size-8 animate-spin text-primary" />
+          <div className="space-y-1">
+            <p className="text-sm font-semibold text-foreground">{exportMessage}</p>
+            <p className="text-xs text-muted-foreground">
+              This usually only takes a moment.
+            </p>
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   );
 }
