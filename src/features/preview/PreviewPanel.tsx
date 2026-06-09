@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { useResumeStore } from '@/persistence/resumeStore';
 import { HtmlTemplateRenderer } from '@/templates/HtmlTemplateRenderer';
-import { downloadPdfFile } from '@/renderers/pdf/PdfResumeRenderer';
-import { downloadDocxFile } from '@/renderers/docx/DocxResumeRenderer';
 import { exportToJSONResume, importFromJSONResume } from '@/renderers/json/jsonResumeConverter';
 import { Button } from '@/components/ui/button';
 import {
@@ -24,6 +22,16 @@ import { cn } from '@/lib/utils';
 export function PreviewPanel() {
   const { resume, template, setTemplate, updateResume, resetResume, loadSampleData } = useResumeStore();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleExportPdf = async () => {
+    const { downloadPdfFile } = await import('@/renderers/pdf/PdfResumeRenderer');
+    await downloadPdfFile(resume, template);
+  };
+
+  const handleExportDocx = async () => {
+    const { downloadDocxFile } = await import('@/renderers/docx/DocxResumeRenderer');
+    await downloadDocxFile(resume);
+  };
 
   // Trigger download of app-native JSON
   const handleExportNativeJson = () => {
@@ -123,7 +131,7 @@ export function PreviewPanel() {
           <div className="flex flex-wrap gap-2">
             <Button
               type="button"
-              onClick={() => downloadPdfFile(resume, template)}
+              onClick={handleExportPdf}
               className="h-8.5 text-xs font-medium gap-1.5 shadow-xs"
             >
               <Download className="size-3.5" />
@@ -132,7 +140,7 @@ export function PreviewPanel() {
             <Button
               type="button"
               variant="outline"
-              onClick={() => downloadDocxFile(resume)}
+              onClick={handleExportDocx}
               className="h-8.5 text-xs font-medium gap-1.5"
             >
               <FileText className="size-3.5 text-blue-600" />
