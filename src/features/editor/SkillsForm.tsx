@@ -1,14 +1,11 @@
 import * as React from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useResumeStore } from '@/persistence/resumeStore';
-import { skillSchema } from '@/domain/resume/schemas';
 import { Skill } from '@/domain/resume/types';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Trash, Plus, Code, ChevronUp, ChevronDown } from 'lucide-react';
+import { Trash, Plus, ChevronUp, ChevronDown } from 'lucide-react';
 
 /**
  * Props for the SkillItemEditor.
@@ -34,37 +31,17 @@ function SkillItemEditor({
   isLast,
 }: SkillItemEditorProps) {
   const { updateSkill } = useResumeStore();
-
-  const {
-    register,
-    watch,
-    formState: { errors },
-    reset,
-  } = useForm<Skill>({
-    resolver: zodResolver(skillSchema),
-    defaultValues: skill,
-    mode: 'onChange',
-  });
-
-  React.useEffect(() => {
-    reset(skill);
-  }, [skill, reset]);
-
-  // Keep track of input value to sync
-  const keywordsValue = watch('keywords' as any) || [];
   const [inputValue, setInputValue] = React.useState(() => 
-    Array.isArray(keywordsValue) ? keywordsValue.join(', ') : ''
+    skill.keywords.join(', ')
   );
 
   React.useEffect(() => {
-    if (Array.isArray(keywordsValue)) {
-      const currentText = keywordsValue.join(', ');
-      // Only set if textually different to prevent cursor jumps
-      if (currentText !== inputValue && document.activeElement !== document.getElementById(`skills-input-${skill.id}`)) {
-        setInputValue(currentText);
-      }
+    const currentText = skill.keywords.join(', ');
+    // Only set if textually different to prevent cursor jumps
+    if (currentText !== inputValue && document.activeElement !== document.getElementById(`skills-input-${skill.id}`)) {
+      setInputValue(currentText);
     }
-  }, [keywordsValue]);
+  }, [skill.id, skill.keywords, inputValue]);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     updateSkill(skill.id, { name: e.target.value });

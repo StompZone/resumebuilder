@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Resume } from '@/domain/resume/types';
 import { formatYearMonth } from '@/features/timeline/timelineUtils';
 import { Mail, Phone, Globe, MapPin } from 'lucide-react';

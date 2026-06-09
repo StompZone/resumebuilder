@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { useResumeStore, ResumeTemplateType } from '@/persistence/resumeStore';
+import { useResumeStore } from '@/persistence/resumeStore';
 import { HtmlTemplateRenderer } from '@/templates/HtmlTemplateRenderer';
 import { downloadPdfFile } from '@/renderers/pdf/PdfResumeRenderer';
 import { downloadDocxFile } from '@/renderers/docx/DocxResumeRenderer';
 import { exportToJSONResume, importFromJSONResume } from '@/renderers/json/jsonResumeConverter';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import {
   FileText,
   Download,

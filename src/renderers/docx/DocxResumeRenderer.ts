@@ -23,7 +23,7 @@ function createSectionHeader(title: string): Paragraph {
       bottom: {
         color: '333333',
         space: 4,
-        value: BorderStyle.SINGLE,
+        style: BorderStyle.SINGLE,
         size: 8,
       },
     },
@@ -174,7 +174,7 @@ export async function downloadDocxFile(resume: Resume) {
                     font: 'Arial',
                     size: 18,
                     color: '2d3748',
-                    italic: true,
+                    italics: true,
                   }),
                 ],
               })

@@ -13,8 +13,7 @@ export const dateSchema = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, {
 export const optionalUrlSchema = z.union([
   z.string().url({ message: 'Must be a valid URL' }),
   z.literal(''),
-  z.undefined()
-]);
+]).optional();
 
 /**
  * Zod schema for social profiles.
@@ -61,7 +60,7 @@ export const workSchema = z.object({
   url: optionalUrlSchema,
   startDate: dateSchema,
   endDate: z.string().optional(),
-  isCurrent: z.boolean().default(false),
+  isCurrent: z.boolean(),
   summary: z.string().min(1, 'Summary of achievements is required'),
   highlights: z.array(z.string()),
 }).refine(
@@ -87,7 +86,7 @@ export const educationSchema = z.object({
   studyType: z.string().min(1, 'Degree/Certificate type is required'),
   startDate: dateSchema,
   endDate: z.string().optional(),
-  isCurrent: z.boolean().default(false),
+  isCurrent: z.boolean(),
   score: z.string().optional(),
 }).refine(
   (data) => {
@@ -118,11 +117,11 @@ export const projectSchema = z.object({
   id: z.string(),
   name: z.string().min(1, 'Project name is required'),
   description: z.string().min(1, 'Description is required'),
-  highlights: z.array(z.string()).default([]),
-  keywords: z.array(z.string()).default([]),
+  highlights: z.array(z.string()),
+  keywords: z.array(z.string()),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
-  isCurrent: z.boolean().default(false),
+  isCurrent: z.boolean(),
   url: optionalUrlSchema,
 }).refine(
   (data) => {

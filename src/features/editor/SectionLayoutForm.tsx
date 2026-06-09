@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useResumeStore } from '@/persistence/resumeStore';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';

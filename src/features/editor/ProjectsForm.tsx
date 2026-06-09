@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useForm, useFieldArray, Controller } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useResumeStore } from '@/persistence/resumeStore';
 import { projectSchema } from '@/domain/resume/schemas';
@@ -48,6 +48,7 @@ function ProjectItemEditor({
     register,
     control,
     watch,
+    setValue,
     formState: { errors },
     reset,
   } = useForm<Project>({
@@ -56,16 +57,12 @@ function ProjectItemEditor({
     mode: 'onChange',
   });
 
-  const { fields, append, remove } = useFieldArray<Project>({
-    control,
-    name: 'highlights',
-  });
-
   React.useEffect(() => {
     reset(project);
   }, [project, reset]);
 
   const isCurrent = watch('isCurrent');
+  const highlights = watch('highlights') ?? [];
   const keywordsValue = watch('keywords') || [];
   const [kwInput, setKwInput] = React.useState(() => keywordsValue.join(', '));
 
@@ -266,7 +263,7 @@ function ProjectItemEditor({
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => append('')}
+                onClick={() => setValue('highlights', [...highlights, ''], { shouldDirty: true, shouldValidate: true })}
                 className="h-7 text-xs gap-1"
               >
                 <Plus className="size-3" />
@@ -275,18 +272,18 @@ function ProjectItemEditor({
             </div>
 
             <div className="space-y-2">
-              {fields.map((field, index) => (
-                <div key={field.id} className="flex gap-2 items-center">
+              {highlights.map((_, index) => (
+                <div key={index} className="flex gap-2 items-center">
                   <Input
                     placeholder="e.g. Shipped a serverless REST API processing 1k requests/min."
                     className="h-9 flex-1 text-sm"
-                    {...register(`highlights.${index}` as any)}
+                    {...register(`highlights.${index}` as const)}
                   />
                   <Button
                     type="button"
                     variant="ghost"
                     size="icon"
-                    onClick={() => remove(index)}
+                    onClick={() => setValue('highlights', highlights.filter((_, highlightIndex) => highlightIndex !== index), { shouldDirty: true, shouldValidate: true })}
                     className="h-9 w-9 text-destructive hover:bg-destructive/10 shrink-0"
                   >
                     <Trash className="size-4" />

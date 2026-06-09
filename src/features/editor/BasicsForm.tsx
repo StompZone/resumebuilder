@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Trash, Plus, Globe, User } from 'lucide-react';
+import { Trash, Plus, Globe, User, Linkedin } from 'lucide-react';
 
 /**
  * Form component for editing the basics (personal info, location, profiles).

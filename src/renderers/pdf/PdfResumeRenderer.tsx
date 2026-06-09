@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Document, Page, Text, View, StyleSheet, pdf } from '@react-pdf/renderer';
 import { Resume } from '@/domain/resume/types';
 import { formatYearMonth } from '@/features/timeline/timelineUtils';
@@ -64,7 +63,7 @@ const styles = StyleSheet.create({
   },
   classicEntryHeader: {
     flexDirection: 'row',
-    justifyContent: 'between',
+    justifyContent: 'space-between',
     fontWeight: 'bold',
     marginBottom: 2,
   },
@@ -91,7 +90,7 @@ const styles = StyleSheet.create({
   // 2. Modern Sans styles
   modernHeaderGrid: {
     flexDirection: 'row',
-    justifyContent: 'between',
+    justifyContent: 'space-between',
     borderBottom: '1px solid #e2e8f0',
     paddingBottom: 12,
     marginBottom: 14,

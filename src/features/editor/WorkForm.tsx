@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useForm, useFieldArray, Controller } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useResumeStore } from '@/persistence/resumeStore';
 import { workSchema } from '@/domain/resume/schemas';
@@ -8,11 +8,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { MonthYearPicker } from '@/components/ui/month-year-picker';
 import { formatYearMonth, getDurationInMonths, formatDuration } from '@/features/timeline/timelineUtils';
-import { Trash, Plus, ChevronDown, ChevronUp, Briefcase, GripVertical, Check } from 'lucide-react';
+import { Trash, Plus, ChevronDown, ChevronUp, Briefcase } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 /**
@@ -47,19 +47,14 @@ function WorkItemEditor({
   const {
     register,
     control,
-    handleSubmit,
     watch,
+    setValue,
     formState: { errors },
     reset,
   } = useForm<Work>({
     resolver: zodResolver(workSchema),
     defaultValues: work,
     mode: 'onChange',
-  });
-
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'highlights' as any,
   });
 
   // Sync form values if the store state changes from outside
@@ -69,7 +64,7 @@ function WorkItemEditor({
 
   // Watch for changes and sync to store
   const isCurrent = watch('isCurrent');
-  const watchAll = watch();
+  const highlights = watch('highlights') ?? [];
 
   React.useEffect(() => {
     const subscription = watch((value) => {
@@ -267,7 +262,7 @@ function WorkItemEditor({
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => append('')}
+                onClick={() => setValue('highlights', [...highlights, ''], { shouldDirty: true, shouldValidate: true })}
                 className="h-7 text-xs gap-1"
               >
                 <Plus className="size-3" />
@@ -276,18 +271,18 @@ function WorkItemEditor({
             </div>
 
             <div className="space-y-2">
-              {fields.map((field, index) => (
-                <div key={field.id} className="flex gap-2 items-center">
+              {highlights.map((_, index) => (
+                <div key={index} className="flex gap-2 items-center">
                   <Input
                     placeholder="e.g. Led migration of 14 core services to Node.js microservices."
                     className="h-9 flex-1 text-sm"
-                    {...register(`highlights.${index}` as any)}
+                    {...register(`highlights.${index}` as const)}
                   />
                   <Button
                     type="button"
                     variant="ghost"
                     size="icon"
-                    onClick={() => remove(index)}
+                    onClick={() => setValue('highlights', highlights.filter((_, highlightIndex) => highlightIndex !== index), { shouldDirty: true, shouldValidate: true })}
                     className="h-9 w-9 text-destructive hover:bg-destructive/10 shrink-0"
                   >
                     <Trash className="size-4" />
@@ -295,7 +290,7 @@ function WorkItemEditor({
                 </div>
               ))}
 
-              {fields.length === 0 && (
+              {highlights.length === 0 && (
                 <p className="text-[11px] text-muted-foreground text-center py-2">
                   No achievements added yet. Bullet points make your achievements highly scannable for recruiters.
                 </p>

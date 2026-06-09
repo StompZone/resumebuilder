@@ -7,7 +7,7 @@ import {
   formatDuration,
   analyzeTimeline,
 } from './timelineUtils';
-import { AlertTriangle, AlertCircle, Info, Calendar } from 'lucide-react';
+import { AlertTriangle, AlertCircle, Calendar } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { cn } from '@/lib/utils';
 
@@ -72,7 +72,6 @@ export function CareerTimeline() {
           {work.map((job) => {
             if (!range) return null;
 
-            const jobStart = parseYearMonth(job.startDate);
             const jobDuration = getDurationInMonths(job.startDate, job.endDate, job.isCurrent);
             
             // Calculate starting percentage offset
