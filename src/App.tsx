@@ -1,5 +1,13 @@
 import { EditorPanel } from '@/features/editor/EditorPanel';
 import { PreviewPanel } from '@/features/preview/PreviewPanel';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { FileDown, ShieldCheck } from 'lucide-react';
 
@@ -43,6 +51,30 @@ function App() {
             <PreviewPanel />
           </div>
         </main>
+
+        <footer className="flex flex-col gap-1 border-t bg-card px-6 py-2 text-center text-[11px] text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:text-left shrink-0">
+          <span>Copyright (c) 2026 DJ Stomp, All Rights Reserved.</span>
+          <Dialog>
+            <DialogTrigger asChild>
+              <button
+                type="button"
+                className="font-medium text-primary underline-offset-4 hover:underline"
+              >
+                Privacy Policy
+              </button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Privacy Policy</DialogTitle>
+                <DialogDescription>
+                  StompZone Resume Builder saves your resume data only in your browser's local storage.
+                  No personally identifiable information is saved, transmitted, sold, shared, or otherwise
+                  disclosed to the developer or any third parties.
+                </DialogDescription>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
+        </footer>
       </div>
     </TooltipProvider>
   );
