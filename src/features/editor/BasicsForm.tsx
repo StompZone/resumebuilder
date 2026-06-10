@@ -22,6 +22,7 @@ export function BasicsForm() {
     register,
     control,
     watch,
+    getValues,
     formState: { errors },
     reset,
   } = useForm<Resume['basics']>({
@@ -37,8 +38,10 @@ export function BasicsForm() {
 
   // Sync form state when store loads fresh data (like sample data or imports)
   React.useEffect(() => {
-    reset(basics);
-  }, [basics, reset]);
+    if (JSON.stringify(getValues()) !== JSON.stringify(basics)) {
+      reset(basics);
+    }
+  }, [basics, getValues, reset]);
 
   // Watch for form value changes and update Zustand store in real time
   React.useEffect(() => {

@@ -1,4 +1,5 @@
 import { Resume } from '@/domain/resume/types';
+import { getSocialProfilePresentations, type SocialProfilePresentation } from '@/domain/resume/socialProfiles';
 import { formatYearMonth } from '@/features/timeline/timelineUtils';
 import { Mail, Phone, Globe, MapPin } from 'lucide-react';
 
@@ -24,6 +25,50 @@ function formatProfileUrl(url: string): string {
  */
 export function HtmlTemplateRenderer({ resume, templateType }: HtmlTemplateRendererProps) {
   const { basics, work, education, skills, projects, certificates, awards, sectionsOrder, sectionsMeta } = resume;
+  const profiles = getSocialProfilePresentations(basics.profiles);
+
+  const renderProfile = (
+    profile: SocialProfilePresentation,
+    index: number,
+    className: string,
+    iconClassName: string,
+    slashClassName = 'text-muted-foreground/60'
+  ) => {
+    const content = (
+      <>
+        {profile.icon ? (
+          <svg viewBox={profile.icon.viewBox || '0 0 24 24'} fill="currentColor" aria-hidden="true" className={iconClassName}>
+            <path d={profile.icon.path} />
+          </svg>
+        ) : (
+          <Globe className={iconClassName} />
+        )}
+        <span className={slashClassName}>/</span>
+        <span>{profile.handle}</span>
+      </>
+    );
+
+    return profile.href ? (
+      <a
+        key={`${profile.key}-${index}`}
+        href={profile.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={className}
+        title={profile.label}
+      >
+        {content}
+      </a>
+    ) : (
+      <span
+        key={`${profile.key}-${index}`}
+        className={className}
+        title={profile.label}
+      >
+        {content}
+      </span>
+    );
+  };
 
   // Render a section's contents by its ID
   const renderSectionContent = (sectionId: string) => {
@@ -192,6 +237,7 @@ export function HtmlTemplateRenderer({ resume, templateType }: HtmlTemplateRende
               </span>
             )}
             {basics.url && <span className="flex items-center gap-1"><Globe className="size-3" />{formatProfileUrl(basics.url)}</span>}
+            {profiles.map((profile, index) => renderProfile(profile, index, "flex items-center gap-1 hover:underline", "size-3 -translate-y-1.5"))}
           </div>
         </div>
 
@@ -246,6 +292,7 @@ export function HtmlTemplateRenderer({ resume, templateType }: HtmlTemplateRende
               </span>
             )}
             {basics.url && <span className="flex md:justify-end items-center gap-1.5"><Globe className="size-3.5 text-primary" />{formatProfileUrl(basics.url)}</span>}
+            {profiles.map((profile, index) => renderProfile(profile, index, "flex md:justify-end items-center gap-1.5 hover:underline", "size-3.5 text-primary -translate-y-[0.4375rem]"))}
           </div>
         </div>
 
@@ -289,6 +336,7 @@ export function HtmlTemplateRenderer({ resume, templateType }: HtmlTemplateRende
           {basics.phone && <span>{basics.phone}</span>}
           {basics.location?.city && <span>{basics.location.city}, {basics.location.region}</span>}
           {basics.url && <a href={basics.url} target="_blank" rel="noopener noreferrer" className="hover:underline text-amber-800">{formatProfileUrl(basics.url)}</a>}
+          {profiles.map((profile, index) => renderProfile(profile, index, "flex items-center gap-1 hover:underline text-amber-800", "size-3 -translate-y-1.5", "text-stone-400"))}
         </div>
       </div>
 

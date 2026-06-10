@@ -1,5 +1,6 @@
-import { Document, Page, Text, View, StyleSheet, pdf } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, pdf, Svg, Path } from '@react-pdf/renderer';
 import { Resume } from '@/domain/resume/types';
+import { getSocialProfilePresentations, type SocialProfilePresentation } from '@/domain/resume/socialProfiles';
 import { formatYearMonth } from '@/features/timeline/timelineUtils';
 
 /**
@@ -33,6 +34,8 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontStyle: 'italic',
     textAlign: 'center',
+    position: 'relative',
+    top: 8,
     marginBottom: 6,
   },
   classicContactBar: {
@@ -40,9 +43,21 @@ const styles = StyleSheet.create({
     fontSize: 8,
     flexDirection: 'row',
     justifyContent: 'center',
+    flexWrap: 'wrap',
     gap: 12,
     color: '#4a4a4a',
     marginBottom: 10,
+  },
+  contactProfileItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+  },
+  contactIcon: {
+    width: 7,
+    height: 7,
+    position: 'relative',
+    top: 3.5,
   },
   classicSummary: {
     fontFamily: 'Times-Roman',
@@ -109,6 +124,8 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: '#2563eb',
     textTransform: 'uppercase',
+    position: 'relative',
+    top: 8,
     marginTop: 2,
   },
   modernContactBlock: {
@@ -166,6 +183,8 @@ const styles = StyleSheet.create({
     color: '#78350f',
     textAlign: 'center',
     letterSpacing: 1,
+    position: 'relative',
+    top: 7,
     marginBottom: 8,
   },
   execContactBar: {
@@ -173,6 +192,7 @@ const styles = StyleSheet.create({
     fontSize: 8,
     flexDirection: 'row',
     justifyContent: 'center',
+    flexWrap: 'wrap',
     gap: 15,
     color: '#78716c',
     marginBottom: 12,
@@ -229,11 +249,32 @@ interface PdfResumeDocumentProps {
   templateType: 'classic' | 'modern' | 'executive';
 }
 
+function formatUrl(url: string): string {
+  return url.replace(/https?:\/\/(www\.)?/, '');
+}
+
+const globeFallbackPath = 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 2c.74 0 1.6 1.18 2.1 3H9.9C10.4 5.18 11.26 4 12 4Zm-4.16 3A8.06 8.06 0 0 1 9.28 5.1 14.05 14.05 0 0 0 8.1 7H7.84Zm6.88-1.9A8.06 8.06 0 0 1 16.16 7H15.9a14.05 14.05 0 0 0-1.18-1.9ZM4.26 9h3.28A16.88 16.88 0 0 0 7.4 12c0 1.06.1 2.07.28 3H4.26A7.94 7.94 0 0 1 4 12c0-1.05.2-2.06.56-3Zm5.3 0h4.88c.22.9.36 1.91.36 3s-.14 2.1-.36 3H9.56A14.7 14.7 0 0 1 9.2 12c0-1.09.14-2.1.36-3Zm6.9 0h3.28c.36.94.56 1.95.56 3s-.2 2.06-.56 3h-3.28c.18-.93.28-1.94.28-3s-.1-2.07-.28-3ZM9.9 17h4.2c-.5 1.82-1.36 3-2.1 3s-1.6-1.18-2.1-3Zm-2.06 0h.26c.32.72.72 1.36 1.18 1.9A8.06 8.06 0 0 1 7.84 17Zm8.32 0a8.06 8.06 0 0 1-1.44 1.9c.46-.54.86-1.18 1.18-1.9h.26Z';
+
 /**
  * React PDF Document component that renders classical, modern, or executive styles.
  */
 export function PdfResumeDocument({ resume, templateType }: PdfResumeDocumentProps) {
   const { basics, work, education, skills, projects, certificates, awards, sectionsOrder, sectionsMeta } = resume;
+  const profiles = getSocialProfilePresentations(basics.profiles);
+
+  const renderProfileContact = (
+    profile: SocialProfilePresentation,
+    color: string,
+    index: number
+  ) => (
+    <View key={`${profile.key}-${index}`} style={styles.contactProfileItem}>
+      <Svg viewBox={profile.icon?.viewBox || '0 0 24 24'} style={styles.contactIcon}>
+        <Path d={profile.icon?.path || globeFallbackPath} fill={color} />
+      </Svg>
+      <Text style={{ color }}>/</Text>
+      <Text>{profile.handle}</Text>
+    </View>
+  );
 
   // Render text element helper for bullet lists
   const renderHighlights = (highlights: string[], fontStyle: any) => {
@@ -373,7 +414,10 @@ export function PdfResumeDocument({ resume, templateType }: PdfResumeDocumentPro
           {basics.email ? <Text>{basics.email}</Text> : null}
           {basics.phone ? <Text>{basics.phone}</Text> : null}
           {basics.location?.city ? <Text>{basics.location.city}, {basics.location.region}</Text> : null}
-          {basics.url ? <Text>{basics.url.replace(/https?:\/\/(www\.)?/, '')}</Text> : null}
+          {basics.url ? <Text>{formatUrl(basics.url)}</Text> : null}
+          {profiles.map((profile, index) => (
+            renderProfileContact(profile, '#4a4a4a', index)
+          ))}
         </View>
         {basics.summary ? <Text style={styles.classicSummary}>{basics.summary}</Text> : null}
       </View>
@@ -411,7 +455,10 @@ export function PdfResumeDocument({ resume, templateType }: PdfResumeDocumentPro
           {basics.email ? <Text>{basics.email}</Text> : null}
           {basics.phone ? <Text>{basics.phone}</Text> : null}
           {basics.location?.city ? <Text>{basics.location.city}, {basics.location.region}</Text> : null}
-          {basics.url ? <Text>{basics.url.replace(/https?:\/\/(www\.)?/, '')}</Text> : null}
+          {basics.url ? <Text>{formatUrl(basics.url)}</Text> : null}
+          {profiles.map((profile, index) => (
+            renderProfileContact(profile, '#64748b', index)
+          ))}
         </View>
       </View>
 
@@ -449,7 +496,10 @@ export function PdfResumeDocument({ resume, templateType }: PdfResumeDocumentPro
           {basics.email ? <Text>{basics.email}</Text> : null}
           {basics.phone ? <Text>{basics.phone}</Text> : null}
           {basics.location?.city ? <Text>{basics.location.city}, {basics.location.region}</Text> : null}
-          {basics.url ? <Text>{basics.url.replace(/https?:\/\/(www\.)?/, '')}</Text> : null}
+          {basics.url ? <Text>{formatUrl(basics.url)}</Text> : null}
+          {profiles.map((profile, index) => (
+            renderProfileContact(profile, '#78716c', index)
+          ))}
         </View>
         {basics.summary ? <Text style={styles.execSummary}>{basics.summary}</Text> : null}
       </View>

@@ -8,6 +8,7 @@ import {
   BorderStyle,
 } from 'docx';
 import { Resume } from '@/domain/resume/types';
+import { getSocialProfilePresentations } from '@/domain/resume/socialProfiles';
 import { formatYearMonth } from '@/features/timeline/timelineUtils';
 
 /**
@@ -72,7 +73,7 @@ export async function downloadDocxFile(resume: Resume) {
     }),
     new Paragraph({
       alignment: AlignmentType.CENTER,
-      spacing: { after: 120 },
+      spacing: { before: 105, after: 15 },
       children: [
         new TextRun({
           text: basics.label,
@@ -91,6 +92,7 @@ export async function downloadDocxFile(resume: Resume) {
   if (basics.phone) contactParts.push(basics.phone);
   if (basics.location?.city) contactParts.push(`${basics.location.city}, ${basics.location.region}`);
   if (basics.url) contactParts.push(formatUrl(basics.url));
+  contactParts.push(...getSocialProfilePresentations(basics.profiles).map((profile) => profile.label));
 
   children.push(
     new Paragraph({
