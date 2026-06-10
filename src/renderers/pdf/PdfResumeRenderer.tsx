@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     width: 7,
     height: 7,
     position: 'relative',
-    top: 3.5,
+    top: -3.5,
   },
   classicSummary: {
     fontFamily: 'Times-Roman',
